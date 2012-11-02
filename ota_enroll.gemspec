@@ -7,11 +7,11 @@ require "ota_enroll/version"
 Gem::Specification.new do |s|
   s.name        = "ota_enroll"
   s.version     = OtaEnroll::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of OtaEnroll."
-  s.description = "TODO: Description of OtaEnroll."
+  s.authors     = ["Tom Meinlschmidt"]
+  s.email       = ["tomas@meinlschmidt.com"]
+  s.homepage    = ""
+  s.summary     = "iOS OTA Configuration Enrollment"
+  s.description = "iOS OTA Configuration Enrollment"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
