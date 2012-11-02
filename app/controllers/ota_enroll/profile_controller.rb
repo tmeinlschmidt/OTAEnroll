@@ -11,7 +11,7 @@ module OtaEnroll
     # enroll configuration profile - BEGIN of process, step #1
     def enroll
       certs = OtaEnroll::Tools.new
-      configuration = OtaEnroll::Enroll.profile_service_payload(enroll_profile_url(params))
+      configuration = OtaEnroll::Enroll.profile_service_payload(profile_url(params))
       signed_profile = OpenSSL::PKCS7.sign(certs.ssl_cert, certs.ssl_key, configuration, [], OpenSSL::PKCS7::BINARY)
 
       send_data signed_profile.to_der, content_type: "application/x-apple-aspen-config"
