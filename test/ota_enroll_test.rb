@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class OtaEnrollTest < ActiveSupport::TestCase
-  test "truth" do
+  def test_truth
     assert_kind_of Module, OtaEnroll
   end
 end

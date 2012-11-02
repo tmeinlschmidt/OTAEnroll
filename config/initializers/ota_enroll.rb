@@ -1,0 +1,1 @@
+OtaEnroll.settings = OpenStruct.new(YAML.load_file("#{Rails.root}/config/ota_enroll.yml")[Rails.env])
