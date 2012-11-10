@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install OtaEnroll
+    $ gem install ota_enroll
 
 ## Usage
 
@@ -38,7 +38,13 @@ Or follow instructions here: http://www.perturb.org/display/754_Apache_self_sign
     openssl req -new -key server.key -out server.csr
     openssl x509 -req -days 3650 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
 
-### sample config
+or just for development use rake
+
+* ``rake cert:ca``
+* ``rake cert:ssl``
+* ``rake cert:ra`` - this is needed for signing webclip configuration
+
+### Sample config
 
 ```
 development:
@@ -46,8 +52,8 @@ development:
   ca_key: /support/ca_private.pem
   ssl_key: /support/ssl_private.pem
   ssl_crt: /support/ssl_cert.pem
-  # ra_crt: /support/ra_cert.pem
-  # ra_key: /support/ra_private.pem
+  ra_crt: /support/ra_cert.pem
+  ra_key: /support/ra_private.pem
   server: https://192.168.1.129
   organization: Meinlschmidt
   identifier: org.meinlschmidt
@@ -56,7 +62,7 @@ development:
   callback_secret: callback secret key
 ```
 
-### calling enroll
+### Calling Enrollment process
 
 call with following params
 
@@ -64,7 +70,7 @@ call with following params
 * ``icon_url`` - icon URL eg. ``http://my.server.com/welcome/13123``
 * ``icon_label`` - what to display as icon link, eg. ``MyServer``
 
-### redirecting
+### Redirecting
 
 on the page you're calling enroll link, please create following javascript:
 
@@ -84,6 +90,16 @@ on the page you're calling enroll link, please create following javascript:
   }, 500);
 </script>
 ```
+
+## How it works
+
+1. user opens landind page - this page contains 'redirecting js code` and link to enroll
+2. user clicks enroll link
+3. user accepts configuration
+4. enrollment process gets udid and other information and calls ``callback_url`` via HTTP GET
+5. enrollment process creates link on phone springboard
+6. enrollment process returns back (switches to landing page)
+7. javascript detects, that we're back, and redirects (or does other action)
 
 ## Contributing
 
