@@ -12,6 +12,8 @@ module OtaEnroll
       @ssl_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ssl_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ssl_key)
       @root_cert = OpenSSL::X509::Certificate.new(File.read(Rails.root.to_s + OtaEnroll.settings.ca_crt)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_crt)
       @root_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ca_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_key)
+      @ra_cert = OpenSSL::X509::Certificate.new(File.read(Rails.root.to_s + OtaEnroll.settings.ra_crt)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_crt)
+      @ra_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ra_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_key)
     end
 
     # returns local IP

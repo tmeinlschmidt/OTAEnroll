@@ -6,7 +6,7 @@ Fetches UDID and other info from iOS device using OTA configuration.
 
 Add this line to your application's Gemfile:
 
-    gem 'OtaEnroll'
+    gem 'ota_enroll'
 
 And then execute:
 
@@ -21,10 +21,8 @@ Or install it yourself as:
 1. create ``support`` dir
 2. run ``rake cert:ca``, ``rake cert:ra`` and ``rake cert:ssl``
 3. create ``config/ota_enroll.yml`` - see sample bellow
-
-call ``/enroll/enroll?userid=my_userid&url=http://where-i-want.redirect.to``
-
-after successfull OTA you'll get request with all the info, including your userid - imei. udid, osversion
+4. add ``mount OtaEnroll::Engine => "/ota_enroll", :as => "ota_enroll_engine"`` to your ``config/routes.rb``
+5. add to your view ``ota_enroll_engine.enroll_path( :callback_url => callback_url, :icon_url => icon_url, :icon_label => 'label' )``
 
 ### Generate Certifies in console ###
 
@@ -55,6 +53,36 @@ development:
   identifier: org.meinlschmidt
   display_name: Meinlschmidt profile
   description: We need to verify you
+  callback_secret: callback secret key
+```
+
+### calling enroll
+
+call with following params
+
+* ``callback_url`` - what to call back with device parameters, eg: ``http://my.server.com/callback?uid=13123``
+* ``icon_url`` - icon URL eg. ``http://my.server.com/welcome/13123``
+* ``icon_label`` - what to display as icon link, eg. ``MyServer``
+
+### redirecting
+
+on the page you're calling enroll link, please create following javascript:
+
+```
+<script content="text/javascript">
+  var old = new Date().getTime();;
+
+  var interval = setInterval(function() {
+    var newtime = new Date().getTime();
+    if ((newtime - old)>550) {
+      stopInterval(interval);
+      // here you can redirect
+      // window.location.href = "....";
+    }
+    document.getElementById('counter2').innerHTML = (newtime - old);
+    old = newtime;
+  }, 500);
+</script>
 ```
 
 ## Contributing

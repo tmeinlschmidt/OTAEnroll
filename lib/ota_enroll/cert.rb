@@ -1,6 +1,18 @@
 module OtaEnroll
 
   class Cert
+    
+    def self.issueCert(req, valid_days)
+      certs = Tools.new
+      req = OpenSSL::X509::Request.new(req)
+      @serial = rand(1000)
+      cert = issue_cert(req.subject, req.public_key, @serial, Time.now, Time.now + (86400 * valid_days),
+        [ 
+          ["keyUsage","digitalSignature,keyEncipherment", true] 
+        ],
+        certs.root_cert, certs.root_key, OpenSSL::Digest::SHA1.new)
+      cert
+    end
 
     def self.issue_cert(dn, key, serial, not_before, not_after, extensions, issuer, issuer_key, digest)
       cert = OpenSSL::X509::Certificate.new
@@ -29,7 +41,7 @@ module OtaEnroll
       store = OpenSSL::X509::Store.new
       p7sign.verify(nil, store, nil, OpenSSL::PKCS7::NOVERIFY)
 
-      Plist::parse_xml(p7sign.data)
+      [p7sign, Plist::parse_xml(p7sign.data)]
     end
 
   end
