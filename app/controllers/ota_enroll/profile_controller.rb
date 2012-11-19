@@ -29,8 +29,11 @@ module OtaEnroll
       data = device_attributes.inject({}){|a,(k,v)| a[k.downcase.to_sym] = v; a}.merge(params.reject{|k,v| ['controller','action'].include?(k.to_s)})
       
       # do pingback with values and callback_secret
-      query = calculate_secret(data, OtaEnroll.settings.callback_secret)
-      Net::HTTP.get(URI.parse("#{callback_url}?#{query}"))
+      begin
+        query = calculate_secret(data, OtaEnroll.settings.callback_secret)
+        Net::HTTP.get(URI.parse("#{callback_url}?#{query}"))
+      rescue
+      end
 
       certs = OtaEnroll::Tools.new
       # create payload

@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 3.2.8"
   s.add_dependency "plist", ">=3.1.0"
   s.add_dependency "uuidtools", ">=2.1.3"
+  s.add_dependency('fakeweb', '1.3.0')
 
-  s.add_development_dependency "sqlite3"
 end

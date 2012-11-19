@@ -1,7 +1,7 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+require "dummy/config/environment"
 require "rails/test_help"
 
 Rails.backtrace_cleaner.remove_silencers!
@@ -9,7 +9,13 @@ Rails.backtrace_cleaner.remove_silencers!
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-# Load fixtures from the engine
-if ActiveSupport::TestCase.method_defined?(:fixture_path=)
-  ActiveSupport::TestCase.fixture_path = File.expand_path("../fixtures", __FILE__)
+def read_fixture(file, mode = "rb")
+  File.open("#{File.dirname(__FILE__)}/fixtures/#{file}", mode) {|fd| fd.read}
+end
+
+def raw_post(action, params, body)
+  @request.env['RAW_POST_DATA'] = body
+  response = post(action, params)
+  @request.env.delete('RAW_POST_DATA')
+  response
 end

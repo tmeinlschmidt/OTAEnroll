@@ -3,13 +3,14 @@ test:
   ca_key: /support/ca_private.pem
   ssl_key: /support/ssl_private.pem
   ssl_crt: /support/ssl_cert.pem
-  # ra_crt: /support/ra_cert.pem
-  # ra_key: /support/ra_private.pem
+  ra_crt: /support/ra_cert.pem
+  ra_key: /support/ra_private.pem
   server: https://192.168.1.129
   organization: Meinlschmidt
   identifier: org.meinlschmidt
   display_name: Meinlschmidt profile
   description: We need to verify you
+  callback_secret: abcsdfasdfsdfsfasfadsfasdf4fq
 
 development:
   ca_crt: /support/ca_cert.pem
@@ -23,3 +24,4 @@ development:
   identifier: org.meinlschmidt
   display_name: Meinlschmidt profile
   description: We need to verify you
+  callback_secret: abcsdfasdfsdfsfasfadsfasdf4fq
