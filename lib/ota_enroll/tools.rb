@@ -8,12 +8,12 @@ module OtaEnroll
 
     # return SSL certificates and keys
     def initialize
-      @ssl_cert = OpenSSL::X509::Certificate.new(File.read(Rails.root.to_s + OtaEnroll.settings.ssl_crt)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ssl_crt)
-      @ssl_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ssl_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ssl_key)
-      @root_cert = OpenSSL::X509::Certificate.new(File.read(Rails.root.to_s + OtaEnroll.settings.ca_crt)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_crt)
-      @root_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ca_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_key)
-      @ra_cert = OpenSSL::X509::Certificate.new(File.read(Rails.root.to_s + OtaEnroll.settings.ra_crt)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_crt)
-      @ra_key = OpenSSL::PKey::RSA.new(File.read(Rails.root.to_s + OtaEnroll.settings.ra_key)) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_key)
+      @ssl_cert = OpenSSL::X509::Certificate.new(File.read(get_path(OtaEnroll.settings.ssl_crt))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ssl_crt)
+      @ssl_key = OpenSSL::PKey::RSA.new(File.read(get_path(OtaEnroll.settings.ssl_key))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ssl_key)
+      @root_cert = OpenSSL::X509::Certificate.new(File.read(get_path(OtaEnroll.settings.ca_crt))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_crt)
+      @root_key = OpenSSL::PKey::RSA.new(File.read(get_path(OtaEnroll.settings.ca_key))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ca_key)
+      @ra_cert = OpenSSL::X509::Certificate.new(File.read(get_path(OtaEnroll.settings.ra_crt))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_crt)
+      @ra_key = OpenSSL::PKey::RSA.new(File.read(get_path(OtaEnroll.settings.ra_key))) if File.exists?(Rails.root.to_s + OtaEnroll.settings.ra_key)
     end
 
     # returns local IP
@@ -25,6 +25,14 @@ module OtaEnroll
       end
       ensure
         Socket.do_not_reverse_lookup = orig
+    end
+
+    private
+
+    # do not add rails.root if path begins with /
+    def get_path(path)
+      return path if path[0] == '/'
+      Rails.root,to_s + path
     end
 
   end
