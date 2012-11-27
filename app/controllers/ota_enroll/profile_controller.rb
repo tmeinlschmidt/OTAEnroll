@@ -15,7 +15,12 @@ module OtaEnroll
     def enroll
       certs = OtaEnroll::Tools.new
       configuration = OtaEnroll::Enroll.profile_service_payload(profile_url(params))
-      signed_profile = OpenSSL::PKCS7.sign(certs.ssl_cert, certs.ssl_key, configuration, [], OpenSSL::PKCS7::BINARY)
+      sign_certs = []
+      sign_certs = [certs.sign_interm_cert] if certs.sign_interm_cert.present?
+      
+      logger.info "enroll configuration: #{configuration} #{sign_certs.inspect}" if debug?
+      
+      signed_profile = OpenSSL::PKCS7.sign(certs.ssl_cert, certs.ssl_key, configuration, sign_certs, OpenSSL::PKCS7::BINARY)
 
       send_data signed_profile.to_der, content_type: "application/x-apple-aspen-config"
     end
@@ -30,10 +35,14 @@ module OtaEnroll
       
       # do pingback with values and callback_secret
       query = calculate_secret(data, OtaEnroll.settings.callback_secret)
+      logger.info "callback: #{query}" if debug?
       Net::HTTP.get(URI.parse("#{callback_url}?#{query}"))
 
       certs = OtaEnroll::Tools.new
       # create payload
+
+      logger.info "profile signers \"#{p7sign.signers[0].issuer.to_s}\" == \"#{certs.root_cert.subject.to_s}\"" if debug?
+      
       if (p7sign.signers[0].issuer.to_s == certs.root_cert.subject.to_s)
         payload = OtaEnroll::Enroll.client_cert_configuration_payload(request, icon_url, icon_label)
         encrypted_profile = OpenSSL::PKCS7.encrypt(p7sign.certificates,
@@ -43,7 +52,12 @@ module OtaEnroll
         configuration = OtaEnroll::Enroll.encryption_cert_payload(request, "", scep_url)
       end
 
-      signed_profile = OpenSSL::PKCS7.sign(certs.ssl_cert, certs.ssl_key, configuration, [], OpenSSL::PKCS7::BINARY)
+      logger.info "profile configuration: #{configuration}" if debug?
+      
+      sign_certs = []
+      sign_certs = [certs.sign_interm_cert] if certs.sign_interm_cert.present?
+      
+      signed_profile = OpenSSL::PKCS7.sign(certs.ssl_cert, certs.ssl_key, configuration, sign_certs, OpenSSL::PKCS7::BINARY)
       send_data signed_profile.to_der, content_type: "application/x-apple-aspen-config"
     end
     
@@ -54,6 +68,10 @@ module OtaEnroll
         scep_certs = OpenSSL::PKCS7.new()
         scep_certs.type = "signed"
         scep_certs.certificates = [certs.root_cert, certs.ra_cert]
+        scep_certs.certificates = [certs.root_cert, certs.server_interm_cert, certs.ra_cert] if certs.server_interm_cert.present?
+
+        logger.info "scep certificates #{scep_certs.certificates.inspect}" if debug?
+
         send_data scep_certs.to_der, content_type: "application/x-x509-ca-ra-cert" and return
       end
 
@@ -81,7 +99,11 @@ module OtaEnroll
     end
 
     private
-    
+ 
+    def debug?
+      OtaEnroll.settings.debug == 'yes'
+    end
+
     # calculate secret - SHA1 of sorted keys + secret
     def calculate_secret(data, secret)
       data = data.sort{|a,b| a.to_s <=> b.to_s}.inject({}){|a,(k,v)| a[k.downcase.to_sym] = v; a}

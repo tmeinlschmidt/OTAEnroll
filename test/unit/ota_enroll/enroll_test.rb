@@ -36,7 +36,7 @@ class OtaEnroll::EnrollTest < ActiveSupport::TestCase
     assert_match 'encrypted content', data['EncryptedPayloadContent'].read
     data.delete('EncryptedPayloadContent')
     data.delete('PayloadUUID')
-    assert_match (DateTime.now + 1.second).utc.to_s, data['PayloadExpirationDate'].to_s
+    assert_match (DateTime.now + 1.day).utc.to_s, data['PayloadExpirationDate'].to_s
     data.delete('PayloadExpirationDate')
     assert data == {
         "PayloadDescription"=>"We need to verify you", 

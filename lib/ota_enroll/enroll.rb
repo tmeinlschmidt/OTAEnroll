@@ -61,7 +61,7 @@ module OtaEnroll
       # strings that show up in UI, customisable
       payload['PayloadDisplayName'] = OtaEnroll.settings.display_name
       payload['PayloadDescription'] = OtaEnroll.settings.description
-      payload['PayloadExpirationDate'] = Time.now + 1
+      payload['PayloadExpirationDate'] = Time.now + 1.day
 
       payload['EncryptedPayloadContent'] = StringIO.new(encrypted_content)
       Plist::Emit.dump(payload)
@@ -101,12 +101,13 @@ module OtaEnroll
       ];
       payload_content['Challenge'] = challenge if challenge.present?
       
-      payload_content['Keysize'] = 1024
+      payload_content['Keysize'] = 1024 #1024
       payload_content['Key Type'] = "RSA"
       payload_content['Key Usage'] = 5 # digital signature (1) | key encipherment (4)
 
       # Disabled until the following is fixed: <rdar://problem/7172187> SCEP various fixes
-      # payload_content['CAFingerprint'] = StringIO.new(OpenSSL::Digest::SHA1.new(@@root_cert.to_der).digest)
+      #certs = OtaEnroll::Tools.new
+      #payload_content['CAFingerprint'] = StringIO.new(OpenSSL::Digest::SHA1.new(certs.root_cert.to_der).digest)
 
       payload['PayloadContent'] = payload_content
       payload

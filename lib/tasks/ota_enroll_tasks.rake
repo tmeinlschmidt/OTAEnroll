@@ -42,10 +42,10 @@ namespace :cert do
   task :ssl => :environment do
     keys = OtaEnroll::Tools.new
     @serial = 1
-    @address = "enroll.appbounty.net"
+    @address = OtaEnroll.settings.address #"staging-enroll.appbounty.net"
     STDERR.puts "address is #{@address}"
     @ssl_key = OpenSSL::PKey::RSA.new(1024)
-    @ssl_cert = OtaEnroll::Cert.issue_cert( OpenSSL::X509::Name.parse("/O=None/CN=enroll.appbounty.net"),
+    @ssl_cert = OtaEnroll::Cert.issue_cert( OpenSSL::X509::Name.parse("/O=None/CN=192.168.1.129"),
       @ssl_key, @serial, Time.now, Time.now+(86400*365),
       [
         ["keyUsage","Digital Signature",true] ,
