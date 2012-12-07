@@ -17,6 +17,8 @@ module OtaEnroll
       @ra_key = OpenSSL::PKey::RSA.new(File.read(get_path(OtaEnroll.settings.ra_key))) if File.exists?(get_path(OtaEnroll.settings.ra_key))
       @sign_interm_cert = OpenSSL::X509::Certificate.new(File.read(get_path(OtaEnroll.settings.sign_interm_crt))) if File.exists?(get_path(OtaEnroll.settings.sign_interm_crt))
       @server_interm_cert = OpenSSL::X509::Certificate.new(File.read(get_path(OtaEnroll.settings.server_interm_crt))) if File.exists?(get_path(OtaEnroll.settings.server_interm_crt))
+      @ssl_cert = OpenSSL::X509::Certificate.new(File.read(OtaEnroll.settings.ssl_crt))
+      @ssl_key = OpenSSL::PKey::RSA.new(File.read(OtaEnroll.settings.ssl_key))
     end
 
     # returns local IP
