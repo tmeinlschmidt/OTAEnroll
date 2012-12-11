@@ -101,7 +101,7 @@ module OtaEnroll
     private
  
     def debug?
-      OtaEnroll.settings.debug == 'yes'
+      OtaEnroll.settings.debug == true
     end
 
     # calculate secret - SHA1 of sorted keys + secret
