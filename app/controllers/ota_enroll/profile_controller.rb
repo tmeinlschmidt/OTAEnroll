@@ -30,9 +30,14 @@ module OtaEnroll
       p7sign, device_attributes = OtaEnroll::Cert.decrypt_request(request.body.read)
       icon_url = params.delete(:icon_url)
       icon_label = params.delete(:icon_label)
-      callback_url = params.delete(:callback_url)
-      data = device_attributes.inject({}){|a,(k,v)| a[k.downcase.to_sym] = v; a}.merge(params.reject{|k,v| ['controller','action'].include?(k.to_s)})
+      callback_url, extra_data = (params.delete(:callback_url)||'').split(/\?/)
       
+      # parse callback_url extra data
+      extra_data = extra_data.split(/&/).inject({}){|k, v| c=v.split(/=/);k[c[0]] = c[1];k} rescue {}
+
+      data = device_attributes.inject({}){|a,(k,v)| a[k.downcase.to_sym] = v; a}.merge(params.reject{|k,v| ['controller','action'].include?(k.to_s)})
+      data.merge!(extra_data)
+
       # do pingback with values and callback_secret
       query = calculate_secret(data, OtaEnroll.settings.callback_secret)
       logger.info "callback: #{query}" if debug?
