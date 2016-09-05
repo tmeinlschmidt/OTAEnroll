@@ -1,6 +1,6 @@
 OtaEnroll::Engine.routes.draw do
-  match "/ca" => "profile#ca"
-  match "/enroll" => "profile#enroll"
-  match "/profile" => "profile#profile"
-  match "/scep" => "profile#scep"
+  get "/ca" => "profile#ca"
+  get "/enroll" => "profile#enroll"
+  post "/profile" => "profile#profile"
+  get "/scep" => "profile#scep"
 end
